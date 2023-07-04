@@ -1,3 +1,4 @@
+import axios from "axios";
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -17,6 +18,34 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
+  const cardWrapper = document.createElement('div');
+  const cardHeadline = document.createElement('div');
+  const cardAuthor = document.createElement('div');
+  const cardAuthorImgWrapper = document.createElement('div')
+  const cardAuthorImg = document.createElement('img');
+  const cardAuthorName = document.createElement('span');
+
+  cardWrapper.classList.add('card');
+  cardHeadline.classList.add('headline');
+  cardAuthor.classList.add('author');
+  cardAuthorImgWrapper.classList.add('img-container');
+
+  cardWrapper.appendChild(cardHeadline);
+  cardWrapper.appendChild(cardAuthor);
+  cardAuthor.appendChild(cardAuthorImgWrapper);
+  cardAuthor.appendChild(cardAuthorName);
+  cardAuthorImgWrapper.appendChild(cardAuthorImg);
+
+  cardHeadline.textContent = article.headline;
+  cardAuthorImg.src = article.authorPhoto;
+  cardAuthorName.textContent = article.authorName;
+
+
+  cardWrapper.addEventListener('click', () => {
+    console.log(article.headline);
+  })
+
+  return cardWrapper;
 }
 
 const cardAppender = (selector) => {
@@ -28,6 +57,21 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
+
+  // eslint-disable-next-line no-undef
+  axios.get(`http://localhost:5001/api/articles`)
+    .then(resp => {
+          const headlines = Object.values(resp.data.articles).flat();
+
+          headlines.forEach(article => {
+            const card = Card(article);
+            document.querySelector(selector).appendChild(card)
+          });
+    })
+    .catch(err => {
+      console.log('Error', err)
+    })
+
 }
 
 export { Card, cardAppender }
